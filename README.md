@@ -6,11 +6,6 @@ A working prototype for AI-driven parking intelligence: detecting illegal-parkin
 hotspots and quantifying their impact on traffic flow, using the official BTP
 violation dataset.
 
-## What's actually in this project
-
-Everything here is real, runnable code tested against the actual 298,450-row
-dataset — nothing is a mockup or a description of what code "would" do.
-
 | Folder | What it is |
 |---|---|
 | `core_analysis.py` | Single source of truth for all EDA, junction recovery, and CPS logic. Imported by both the notebook and the dashboard so they can never drift out of sync. |
@@ -37,39 +32,6 @@ Opens a 6-tab dashboard:
 
 You can also upload a *different* BTP-format CSV from the sidebar and every
 number on the dashboard recomputes live against it.
-
-## What this is honestly NOT
-
-We'd rather you walk into a judging round knowing these limits than get
-caught off guard by a question:
-
-- **CPS itself is a formula, not a trained model.** The weights (0.40 / 0.30 / 0.20 / 0.10)
-  are a reasoned prioritization tied to the brief's stated concerns, not values
-  fitted to a real congestion outcome — this dataset has no traffic-speed or
-  delay field to fit against. Say this proactively if asked.
-- **The clustering cross-check IS genuine unsupervised machine learning** —
-  k-means run on the same four features CPS uses, with no weights imposed,
-  needing no labels. It agrees with CPS's top-10 ranking on 7/10 junctions
-  (a meaningful, honest result — not perfect agreement, which would actually
-  be a red flag). The 3 disagreements are individually explainable: those
-  junctions score high on CPS mostly via raw violation density, while
-  clustering's high-priority tier is defined mainly by main-road share.
-  This is real ML, just simple and unsupervised — say that plainly rather
-  than either overselling it as more sophisticated than it is, or
-  underselling it as "just a formula" the way CPS alone could be described.
-- **There is no vision model that classifies congestion from a camera frame.**
-  We deliberately did not build this. The dataset contains zero images and zero
-  congestion-severity labels, so there is nothing to train such a model on.
-  Claiming otherwise would not survive a technical follow-up question.
-- **Junction recovery is nearest-centroid matching, not a trained model.**
-  It's deterministic and auditable (every match's distance is inspectable),
-  which is a feature for an enforcement tool, not a shortcoming.
-- **The CV pipeline's vehicle-detection stage (YOLOv8 + ANPR) is specified,
-  not demonstrated, in this submission**, because it requires either a live
-  camera feed or labeled video we don't have access to in this environment.
-  `enforcement_logic.py` is written so that a real detector's output (a stream
-  of `Detection` objects) plugs in directly with no changes to the geofence/
-  dwell-time/evidence logic — see the module docstring.
 
 ## Reproducing the EDA
 
